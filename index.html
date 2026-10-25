@@ -22,16 +22,18 @@
     <main class="shell">
       <header class="intro">
         <p class="brand">App Streaming</p>
-        <h1>Votre avis compte</h1>
+        <h1>Vos habitudes de streaming et de messagerie</h1>
         <p class="lede">
-          Quelques questions pour mieux comprendre vos habitudes sur les
-          plateformes de streaming.
+          Quelques minutes pour nous aider à comprendre ce que vous utilisez —
+          et pourquoi.
         </p>
       </header>
 
       <form id="survey-form" class="survey" novalidate>
-        <label class="field">
-          <span class="label">Email <em>(optionnel)</em></span>
+        <div class="field">
+          <label class="label" for="email"
+            >Email <em>(optionnel)</em></label
+          >
           <input
             type="email"
             name="email"
@@ -40,50 +42,221 @@
             autocomplete="email"
             inputmode="email"
           />
-          <span class="hint">Laissez vide si vous préférez rester anonyme.</span>
-        </label>
-
-        <label class="field">
-          <span class="label"
-            >Que pensez-vous des applications de streaming comme YouTube,
-            Netflix, Spotify, …&nbsp;?</span
+          <span class="hint"
+            >Laissez vide si vous préférez rester anonyme.</span
           >
-          <textarea
-            name="opinion"
-            id="opinion"
-            rows="4"
-            required
-            placeholder="Partagez votre impression générale…"
-          ></textarea>
-        </label>
+        </div>
 
-        <label class="field">
-          <span class="label">Lequel préférez-vous&nbsp;?</span>
-          <input
-            type="text"
-            name="favorite"
-            id="favorite"
-            required
-            placeholder="Ex. Netflix, Spotify, YouTube…"
-            autocomplete="off"
-          />
-        </label>
+        <section class="section" aria-labelledby="sec-streaming">
+          <h2 class="section-title" id="sec-streaming">Streaming</h2>
 
-        <label class="field">
-          <span class="label">Pourquoi&nbsp;?</span>
-          <textarea
-            name="why"
-            id="why"
-            rows="4"
-            required
-            placeholder="Ce qui fait la différence pour vous…"
-          ></textarea>
-        </label>
+          <div class="field">
+            <label class="label" for="q1"
+              >Que pensez-vous des applications de streaming comme YouTube,
+              Netflix, Spotify, …&nbsp;?</label
+            >
+            <textarea
+              name="q1"
+              id="q1"
+              rows="4"
+              required
+              placeholder="Partagez votre impression générale…"
+            ></textarea>
+          </div>
+
+          <fieldset class="field">
+            <legend class="label">Lequel préférez-vous&nbsp;?</legend>
+            <div class="choices" role="radiogroup" aria-label="Préférence streaming">
+              <label class="choice"
+                ><input type="radio" name="q2_choice" value="YouTube" /><span
+                  >YouTube</span
+                ></label
+              >
+              <label class="choice"
+                ><input type="radio" name="q2_choice" value="Netflix" /><span
+                  >Netflix</span
+                ></label
+              >
+              <label class="choice"
+                ><input type="radio" name="q2_choice" value="Spotify" /><span
+                  >Spotify</span
+                ></label
+              >
+              <label class="choice"
+                ><input type="radio" name="q2_choice" value="TikTok" /><span
+                  >TikTok</span
+                ></label
+              >
+              <label class="choice"
+                ><input type="radio" name="q2_choice" value="Autre" /><span
+                  >Autre</span
+                ></label
+              >
+            </div>
+            <label class="hint" for="q2_other">Ou précisez librement&nbsp;:</label>
+            <input
+              type="text"
+              id="q2_other"
+              name="q2_other"
+              placeholder="Votre préférence…"
+              autocomplete="off"
+            />
+          </fieldset>
+
+          <div class="field">
+            <label class="label" for="q3">Pourquoi&nbsp;?</label>
+            <textarea
+              name="q3"
+              id="q3"
+              rows="4"
+              required
+              placeholder="Ce qui fait la différence pour vous…"
+            ></textarea>
+          </div>
+
+          <fieldset class="field">
+            <legend class="label">
+              Aimeriez-vous avoir tous les types d’application de streaming en
+              un&nbsp;?
+            </legend>
+            <span class="hint"
+              >Exemple&nbsp;: Spotify + Netflix + YouTube + TikTok — de «&nbsp;pas
+              du tout&nbsp;» à «&nbsp;absolument&nbsp;».</span
+            >
+            <div
+              class="scale"
+              role="radiogroup"
+              aria-label="Intérêt pour une app tout-en-un"
+            >
+              <label class="choice"
+                ><input type="radio" name="q4_scale" value="1" required /><span
+                  >1</span
+                ></label
+              >
+              <label class="choice"
+                ><input type="radio" name="q4_scale" value="2" /><span
+                  >2</span
+                ></label
+              >
+              <label class="choice"
+                ><input type="radio" name="q4_scale" value="3" /><span
+                  >3</span
+                ></label
+              >
+              <label class="choice"
+                ><input type="radio" name="q4_scale" value="4" /><span
+                  >4</span
+                ></label
+              >
+              <label class="choice"
+                ><input type="radio" name="q4_scale" value="5" /><span
+                  >5</span
+                ></label
+              >
+            </div>
+            <div class="scale-labels" aria-hidden="true">
+              <span>Pas du tout</span>
+              <span>Absolument</span>
+            </div>
+            <label class="hint" for="q4_comment"
+              >Commentaire <em>(facultatif)</em></label
+            >
+            <input
+              type="text"
+              id="q4_comment"
+              name="q4_comment"
+              placeholder="Précisez si vous le souhaitez…"
+              autocomplete="off"
+            />
+          </fieldset>
+        </section>
+
+        <section class="section" aria-labelledby="sec-messagerie">
+          <h2 class="section-title" id="sec-messagerie">Messagerie</h2>
+
+          <div class="field">
+            <label class="label" for="q5"
+              >Que pensez-vous de WhatsApp&nbsp;?</label
+            >
+            <textarea
+              name="q5"
+              id="q5"
+              rows="4"
+              required
+              placeholder="Votre ressenti…"
+            ></textarea>
+          </div>
+
+          <div class="field">
+            <label class="label" for="q6"
+              >Pourquoi êtes-vous sur WhatsApp&nbsp;?</label
+            >
+            <textarea
+              name="q6"
+              id="q6"
+              rows="4"
+              required
+              placeholder="Les raisons principales…"
+            ></textarea>
+          </div>
+
+          <fieldset class="field">
+            <legend class="label">
+              Savez-vous qu’il existe d’autres logiciels de messagerie à part
+              WhatsApp, beaucoup plus sécurisés&nbsp;?
+            </legend>
+            <div
+              class="yn"
+              role="radiogroup"
+              aria-label="Connaissance d’alternatives sécurisées"
+            >
+              <label class="choice"
+                ><input type="radio" name="q7_yn" value="Oui" required /><span
+                  >Oui</span
+                ></label
+              >
+              <label class="choice"
+                ><input type="radio" name="q7_yn" value="Non" /><span
+                  >Non</span
+                ></label
+              >
+            </div>
+            <label class="hint" for="q7_comment"
+              >Commentaire <em>(facultatif)</em></label
+            >
+            <input
+              type="text"
+              id="q7_comment"
+              name="q7_comment"
+              placeholder="Par exemple les apps que vous connaissez…"
+              autocomplete="off"
+            />
+          </fieldset>
+
+          <div class="field">
+            <label class="label" for="q8"
+              >Pourquoi ne les utilisez-vous pas&nbsp;?
+              <em
+                >(facultatif — passez si vous utilisez déjà des
+                alternatives)</em
+              ></label
+            >
+            <textarea
+              name="q8"
+              id="q8"
+              rows="4"
+              placeholder="Habitudes, amis, freins… ou laissez vide."
+            ></textarea>
+          </div>
+        </section>
 
         <p id="form-error" class="error" hidden role="alert"></p>
 
         <div class="actions">
-          <button type="submit" class="submit">Envoyer</button>
+          <button type="submit" class="submit">Envoyer mes réponses</button>
+          <span class="save-note"
+            >Enregistrement local sur cet appareil (pas de serveur).</span
+          >
         </div>
       </form>
 
@@ -91,8 +264,8 @@
         <p class="brand">App Streaming</p>
         <h2>Merci&nbsp;!</h2>
         <p class="lede">
-          Vos réponses ont bien été enregistrées. Elles nous aident à façonner
-          l’expérience.
+          Vos réponses ont bien été enregistrées localement. Elles nous aident à
+          façonner l’expérience.
         </p>
         <button type="button" id="reset-btn" class="ghost">
           Répondre à nouveau

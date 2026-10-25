@@ -93,7 +93,7 @@ body {
 .shell {
   position: relative;
   z-index: 1;
-  width: min(100% - 2rem, 40rem);
+  width: min(100% - 2rem, 42rem);
   margin: 0 auto;
   padding: clamp(2.5rem, 8vh, 5rem) 0 clamp(3rem, 8vh, 5rem);
 }
@@ -111,15 +111,23 @@ body {
   font-size: clamp(2.4rem, 8vw, 3.6rem);
   letter-spacing: -0.04em;
   line-height: 0.95;
-  color: var(--foam);
   background: linear-gradient(120deg, var(--foam) 20%, var(--accent) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
-h1,
-h2 {
+h1 {
+  margin: 0 0 0.75rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.35rem, 3.8vw, 1.75rem);
+  letter-spacing: -0.02em;
+  color: var(--mist);
+  max-width: 22ch;
+}
+
+.success h2 {
   margin: 0 0 0.75rem;
   font-family: var(--font-display);
   font-weight: 700;
@@ -130,20 +138,42 @@ h2 {
 
 .lede {
   margin: 0;
-  max-width: 34ch;
+  max-width: 38ch;
   color: var(--muted);
   font-size: 1.05rem;
 }
 
 .survey {
   display: grid;
-  gap: 1.35rem;
+  gap: 1.5rem;
   animation: rise 0.85s ease 0.08s both;
+}
+
+.section {
+  display: grid;
+  gap: 1.35rem;
+  padding-top: 0.35rem;
+}
+
+.section-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  padding-bottom: 0.55rem;
+  border-bottom: 1px solid var(--line);
 }
 
 .field {
   display: grid;
   gap: 0.45rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-inline-size: 0;
 }
 
 .label {
@@ -167,7 +197,12 @@ h2 {
   color: var(--muted);
 }
 
-input,
+.hint em {
+  font-style: normal;
+}
+
+input[type="email"],
+input[type="text"],
 textarea {
   width: 100%;
   margin: 0;
@@ -191,25 +226,108 @@ textarea::placeholder {
   color: rgba(234, 247, 243, 0.35);
 }
 
-input:hover,
+input[type="email"]:hover,
+input[type="text"]:hover,
 textarea:hover {
   border-color: rgba(125, 255, 179, 0.4);
 }
 
-input:focus,
+input[type="email"]:focus,
+input[type="text"]:focus,
 textarea:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(125, 255, 179, 0.16);
   background: rgba(6, 21, 18, 0.72);
 }
 
-input:invalid:not(:placeholder-shown):not(:focus),
-textarea:invalid:not(:placeholder-shown):not(:focus) {
-  border-color: rgba(255, 143, 122, 0.55);
+.choices,
+.scale,
+.yn {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.choices {
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+}
+
+.scale {
+  grid-template-columns: repeat(5, 1fr);
+  margin-top: 0.25rem;
+}
+
+.yn {
+  grid-template-columns: 1fr 1fr;
+  max-width: 280px;
+}
+
+.choice {
+  position: relative;
+}
+
+.choice input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.choice span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0.55rem 0.65rem;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--field);
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.15s ease;
+  cursor: pointer;
+}
+
+.choice:hover span {
+  border-color: rgba(125, 255, 179, 0.45);
+  transform: translateY(-1px);
+}
+
+.choice input:checked + span {
+  border-color: var(--accent);
+  background: rgba(125, 255, 179, 0.14);
+  color: var(--accent);
+}
+
+.choice input:focus-visible + span {
+  box-shadow: 0 0 0 3px rgba(125, 255, 179, 0.2);
+}
+
+.scale-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--muted);
 }
 
 .actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  align-items: center;
   margin-top: 0.35rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--line);
+}
+
+.save-note {
+  font-size: 0.88rem;
+  color: var(--muted);
 }
 
 .submit,
@@ -293,12 +411,19 @@ textarea:invalid:not(:placeholder-shown):not(:focus) {
 
 @media (min-width: 720px) {
   .shell {
-    width: min(100% - 4rem, 42rem);
+    width: min(100% - 4rem, 44rem);
   }
 
   .submit {
     width: auto;
-    min-width: 11rem;
+    min-width: 14rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .scale .choice span {
+    font-size: 0.85rem;
+    padding: 0.45rem 0.2rem;
   }
 }
 
@@ -311,7 +436,8 @@ textarea:invalid:not(:placeholder-shown):not(:focus) {
   }
 
   .submit,
-  .ghost {
+  .ghost,
+  .choice span {
     transition: none;
   }
 }

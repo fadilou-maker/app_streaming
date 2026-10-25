@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sondage — App Streaming</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Syne:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="atmosphere" aria-hidden="true">
+      <div class="glow glow-a"></div>
+      <div class="glow glow-b"></div>
+      <div class="grain"></div>
+    </div>
+
+    <main class="shell">
+      <header class="intro">
+        <p class="brand">App Streaming</p>
+        <h1>Votre avis compte</h1>
+        <p class="lede">
+          Quelques questions pour mieux comprendre vos habitudes sur les
+          plateformes de streaming.
+        </p>
+      </header>
+
+      <form id="survey-form" class="survey" novalidate>
+        <label class="field">
+          <span class="label">Email <em>(optionnel)</em></span>
+          <input
+            type="email"
+            name="email"
+            id="email"
+            placeholder="vous@exemple.com"
+            autocomplete="email"
+            inputmode="email"
+          />
+          <span class="hint">Laissez vide si vous préférez rester anonyme.</span>
+        </label>
+
+        <label class="field">
+          <span class="label"
+            >Que pensez-vous des applications de streaming comme YouTube,
+            Netflix, Spotify, …&nbsp;?</span
+          >
+          <textarea
+            name="opinion"
+            id="opinion"
+            rows="4"
+            required
+            placeholder="Partagez votre impression générale…"
+          ></textarea>
+        </label>
+
+        <label class="field">
+          <span class="label">Lequel préférez-vous&nbsp;?</span>
+          <input
+            type="text"
+            name="favorite"
+            id="favorite"
+            required
+            placeholder="Ex. Netflix, Spotify, YouTube…"
+            autocomplete="off"
+          />
+        </label>
+
+        <label class="field">
+          <span class="label">Pourquoi&nbsp;?</span>
+          <textarea
+            name="why"
+            id="why"
+            rows="4"
+            required
+            placeholder="Ce qui fait la différence pour vous…"
+          ></textarea>
+        </label>
+
+        <p id="form-error" class="error" hidden role="alert"></p>
+
+        <div class="actions">
+          <button type="submit" class="submit">Envoyer</button>
+        </div>
+      </form>
+
+      <section id="success" class="success" hidden>
+        <p class="brand">App Streaming</p>
+        <h2>Merci&nbsp;!</h2>
+        <p class="lede">
+          Vos réponses ont bien été enregistrées. Elles nous aident à façonner
+          l’expérience.
+        </p>
+        <button type="button" id="reset-btn" class="ghost">
+          Répondre à nouveau
+        </button>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>

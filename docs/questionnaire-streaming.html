@@ -1657,6 +1657,11 @@
       } catch (e) { /* ignore */ }
 
       updateProgress();
+
+      /* Aperçu écran merci (captures / démo) : #preview-merci */
+      if (location.hash === "#preview-merci") {
+        showThanks();
+      }
     })();
   </script>
 </body>

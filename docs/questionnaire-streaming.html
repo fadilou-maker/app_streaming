@@ -1,0 +1,1663 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Étude utilisateur — Streaming & messagerie · Courant</title>
+  <style>
+    :root {
+      --ink: #12262b;
+      --ink-soft: #2a4148;
+      --muted: #4d646c;
+      --paper: #e8f0ee;
+      --surface: #ffffff;
+      --line: #c5d4d6;
+      --teal: #0a5c5a;
+      --teal-deep: #063f3e;
+      --mint: #1a9b96;
+      --coral: #b4472c;
+      --focus: #0d7a77;
+      --chip: #f3f8f7;
+      --chip-on: #d7efed;
+      --radius: 10px;
+      --font-display: "Trebuchet MS", "Gill Sans", "Segoe UI", sans-serif;
+      --font-body: "Segoe UI", "Avenir Next", "Helvetica Neue", Arial, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: var(--font-body);
+      font-size: 1.05rem;
+      line-height: 1.55;
+      background:
+        radial-gradient(900px 420px at 0% -5%, rgba(26, 155, 150, 0.22), transparent 55%),
+        radial-gradient(700px 360px at 100% 5%, rgba(180, 71, 44, 0.12), transparent 50%),
+        linear-gradient(175deg, #dce8e6 0%, var(--paper) 40%, #d5e2e5 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.55;
+      background-image: repeating-linear-gradient(
+        -18deg,
+        transparent,
+        transparent 22px,
+        rgba(6, 63, 62, 0.035) 22px,
+        rgba(6, 63, 62, 0.035) 23px
+      );
+      z-index: 0;
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      width: min(720px, calc(100% - 1.5rem));
+      margin: 0 auto;
+      padding: 1.75rem 0 3.5rem;
+    }
+
+    .hero {
+      margin-bottom: 1.35rem;
+      padding: 1.35rem 1.2rem 1.25rem;
+      background: var(--surface);
+      border: 1.5px solid var(--line);
+      border-radius: 14px;
+      border-left: 5px solid var(--teal);
+      box-shadow: 0 8px 28px rgba(18, 38, 43, 0.06);
+    }
+
+    .brand {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(2.35rem, 8vw, 3.2rem);
+      letter-spacing: -0.035em;
+      line-height: 0.95;
+      margin: 0 0 0.65rem;
+      color: var(--teal-deep);
+    }
+
+    .hero h1 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: clamp(1.2rem, 3.4vw, 1.45rem);
+      letter-spacing: -0.02em;
+      line-height: 1.3;
+      margin: 0 0 0.65rem;
+      color: var(--ink);
+      max-width: 30ch;
+    }
+
+    .intro {
+      margin: 0;
+      color: var(--ink-soft);
+      font-size: 0.98rem;
+      max-width: 48ch;
+    }
+
+    .intro strong { color: var(--ink); font-weight: 700; }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem 0.85rem;
+      margin: 0.95rem 0 0;
+      padding: 0;
+      list-style: none;
+      font-size: 0.86rem;
+      color: var(--muted);
+    }
+
+    .meta li {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .meta li + li::before {
+      content: "";
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--mint);
+      flex-shrink: 0;
+    }
+
+    .progress-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      margin: 0 0 1.1rem;
+      padding: 0.7rem 0.85rem 0.65rem;
+      background: #ffffff;
+      border: 1.5px solid var(--line);
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(18, 38, 43, 0.07);
+    }
+
+    .progress-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 1rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .progress-top span {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .progress-top #progress-pct {
+      color: var(--teal-deep);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .progress-track {
+      height: 6px;
+      border-radius: 999px;
+      background: #d5e4e3;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--teal-deep), var(--mint));
+      transition: width 0.3s ease;
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1.5px solid var(--line);
+      border-radius: 14px;
+      padding: 1.25rem 1.15rem 1.15rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 6px 22px rgba(18, 38, 43, 0.05);
+    }
+
+    .section-head {
+      display: flex;
+      align-items: baseline;
+      gap: 0.6rem;
+      margin: 0 0 1rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 2px solid #e2eceb;
+    }
+
+    .section-num {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 0.9rem;
+      color: var(--teal);
+      letter-spacing: 0.02em;
+      flex-shrink: 0;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      margin: 0;
+      color: var(--ink);
+    }
+
+    .field { margin-bottom: 1.2rem; }
+    .field:last-child { margin-bottom: 0; }
+
+    fieldset {
+      border: 0;
+      margin: 0;
+      padding: 0;
+      min-inline-size: 0;
+    }
+
+    label.q-label,
+    .q-label,
+    legend.q-label {
+      display: block;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 0.4rem;
+      font-size: 1rem;
+      float: none;
+      width: 100%;
+      padding: 0;
+    }
+
+    .hint {
+      display: block;
+      font-weight: 400;
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin: 0.15rem 0 0.5rem;
+    }
+
+    .req { color: var(--coral); font-weight: 700; }
+    .opt { color: var(--muted); font-weight: 500; font-size: 0.9em; }
+
+    input[type="email"],
+    input[type="text"],
+    input[type="number"],
+    textarea,
+    select {
+      width: 100%;
+      font: inherit;
+      color: var(--ink);
+      background: #fff;
+      border: 1.5px solid var(--line);
+      border-radius: var(--radius);
+      padding: 0.72rem 0.9rem;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      appearance: none;
+    }
+
+    select {
+      background-image:
+        linear-gradient(45deg, transparent 50%, var(--teal) 50%),
+        linear-gradient(135deg, var(--teal) 50%, transparent 50%);
+      background-position: calc(100% - 18px) calc(50% - 3px), calc(100% - 12px) calc(50% - 3px);
+      background-size: 6px 6px, 6px 6px;
+      background-repeat: no-repeat;
+      padding-right: 2.2rem;
+    }
+
+    textarea { min-height: 96px; resize: vertical; }
+
+    input:hover, textarea:hover, select:hover {
+      border-color: #8fb0b0;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--focus);
+      box-shadow: 0 0 0 3px rgba(13, 122, 119, 0.22);
+    }
+
+    input.invalid, textarea.invalid, select.invalid {
+      border-color: var(--coral);
+      box-shadow: 0 0 0 3px rgba(180, 71, 44, 0.18);
+    }
+
+    .error {
+      display: none;
+      color: var(--coral);
+      font-size: 0.86rem;
+      font-weight: 600;
+      margin-top: 0.35rem;
+    }
+    .error.show { display: block; }
+
+    .choices {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 0.5rem;
+    }
+
+    .choices.dense {
+      grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+    }
+
+    .choice { position: relative; }
+
+    .choice input {
+      position: absolute;
+      opacity: 0;
+      inset: 0;
+      margin: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    .choice span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 0.5rem 0.7rem;
+      text-align: center;
+      font-weight: 600;
+      font-size: 0.94rem;
+      color: var(--ink);
+      border: 1.5px solid var(--line);
+      border-radius: 10px;
+      background: var(--chip);
+      transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+      cursor: pointer;
+      pointer-events: none;
+    }
+
+    .choice input:focus-visible + span {
+      box-shadow: 0 0 0 3px rgba(13, 122, 119, 0.25);
+    }
+
+    .choice input:checked + span {
+      border-color: var(--teal);
+      background: var(--chip-on);
+      color: var(--teal-deep);
+      box-shadow: inset 0 0 0 1px var(--teal);
+    }
+
+    .choice:hover span {
+      border-color: #7aa3a1;
+    }
+
+    .yn {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      max-width: 300px;
+    }
+
+    .scale {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.4rem;
+    }
+
+    .scale-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 0.3rem;
+      font-weight: 500;
+    }
+
+    .consent {
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+      padding: 0.9rem 1rem;
+      border: 1.5px solid var(--line);
+      border-radius: var(--radius);
+      background: #f7fbfa;
+    }
+
+    .consent input {
+      width: 1.2rem;
+      height: 1.2rem;
+      margin-top: 0.12rem;
+      accent-color: var(--teal);
+      flex-shrink: 0;
+    }
+
+    .consent label {
+      font-size: 0.96rem;
+      font-weight: 600;
+      color: var(--ink);
+      cursor: pointer;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      align-items: center;
+      margin-top: 0.25rem;
+      padding: 1.1rem 1.15rem;
+      background: var(--surface);
+      border: 1.5px solid var(--line);
+      border-radius: 14px;
+      box-shadow: 0 6px 22px rgba(18, 38, 43, 0.05);
+    }
+
+    .btn {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: -0.01em;
+      border: none;
+      border-radius: 10px;
+      padding: 0.82rem 1.2rem;
+      cursor: pointer;
+      transition: transform 0.12s ease, filter 0.12s ease, background 0.12s ease;
+    }
+
+    .btn:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(13, 122, 119, 0.3);
+    }
+
+    .btn-primary {
+      color: #fff;
+      background: linear-gradient(135deg, var(--teal-deep), var(--teal) 60%, #12857f);
+      box-shadow: 0 10px 24px rgba(6, 63, 62, 0.22);
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.06);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      color: var(--teal-deep);
+      background: #fff;
+      border: 1.5px solid #9bc0be;
+    }
+
+    .btn-secondary:hover {
+      background: var(--chip-on);
+      border-color: var(--teal);
+    }
+
+    .toast {
+      font-size: 0.9rem;
+      color: var(--teal-deep);
+      font-weight: 700;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      min-height: 1.2em;
+      width: 100%;
+    }
+
+    .toast.show { opacity: 1; }
+
+    .toast.error { color: var(--coral); }
+
+    .footer-note {
+      margin: 0.9rem 0.15rem 0;
+      font-size: 0.84rem;
+      color: var(--muted);
+      max-width: 52ch;
+    }
+
+    .actions-secondary {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      width: 100%;
+      margin-top: 0.35rem;
+    }
+
+    .btn:disabled {
+      opacity: 0.65;
+      cursor: wait;
+      transform: none;
+      filter: none;
+    }
+
+    .btn-ghost {
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid transparent;
+      font-size: 0.9rem;
+      padding: 0.55rem 0.85rem;
+      box-shadow: none;
+    }
+
+    .btn-ghost:hover {
+      color: var(--teal-deep);
+      background: var(--chip);
+    }
+
+    /* Thank-you screen */
+    .thanks {
+      display: none;
+      position: relative;
+      text-align: center;
+      padding: 2.5rem 1.35rem 2.2rem;
+      background: var(--surface);
+      border: 1.5px solid var(--line);
+      border-radius: 16px;
+      border-top: 5px solid var(--teal);
+      box-shadow: 0 10px 32px rgba(18, 38, 43, 0.08);
+      overflow: hidden;
+    }
+
+    .thanks.show { display: block; }
+
+    .thanks h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.6rem, 5vw, 2.1rem);
+      color: var(--teal-deep);
+      margin: 0 0 0.7rem;
+      letter-spacing: -0.02em;
+    }
+
+    .thanks p {
+      margin: 0 auto 1.4rem;
+      color: var(--ink-soft);
+      max-width: 36ch;
+      font-size: 1.02rem;
+    }
+
+    .confetti-layer {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .confetti-piece {
+      position: absolute;
+      top: -12px;
+      width: 8px;
+      height: 12px;
+      border-radius: 2px;
+      opacity: 0.95;
+      animation: confetti-fall linear forwards;
+    }
+
+    @keyframes confetti-fall {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(420px) rotate(520deg); opacity: 0; }
+    }
+
+    body.is-thanks .hero,
+    body.is-thanks .progress-wrap,
+    body.is-thanks #survey-form {
+      display: none;
+    }
+
+    body.is-thanks .thanks { display: block; }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .progress-fill, .toast, .btn, .confetti-piece {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+
+    @media (max-width: 540px) {
+      .wrap { padding-top: 1.15rem; }
+      .hero, .panel, .actions, .thanks { padding-left: 1rem; padding-right: 1rem; }
+      .scale .choice span { font-size: 0.88rem; padding: 0.42rem 0.15rem; }
+      .actions { flex-direction: column; align-items: stretch; }
+      .btn { width: 100%; text-align: center; }
+      .actions-secondary { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <p class="brand">Courant</p>
+      <h1>Étude : streaming et messagerie en Afrique</h1>
+      <p class="intro">
+        Nous concevons une <strong>application africaine</strong> qui réunit
+        <strong>streaming</strong> (musique, vidéo) et <strong>messagerie</strong>.
+        Vos réponses guident le produit — pas de compte requis.
+      </p>
+      <ul class="meta">
+        <li>Environ 8–12 minutes</li>
+        <li>Réponses anonymes (email facultatif)</li>
+        <li>Export local uniquement — rien n’est envoyé sur un serveur</li>
+      </ul>
+    </header>
+
+    <div class="progress-wrap" aria-label="Progression du formulaire">
+      <div class="progress-top">
+        <span id="progress-section">Section 1 / 9</span>
+        <span id="progress-pct">0 %</span>
+      </div>
+      <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+    </div>
+
+    <form id="survey-form" novalidate>
+      <!-- 1. Contact & consentement -->
+      <section class="panel" data-section="1" aria-labelledby="s1">
+        <div class="section-head">
+          <span class="section-num">01</span>
+          <h2 class="section-title" id="s1">Contact & consentement</h2>
+        </div>
+
+        <div class="field">
+          <label class="q-label" for="email">
+            Adresse e-mail <span class="opt">(facultatif)</span>
+          </label>
+          <span class="hint" id="email-hint">Uniquement si vous acceptez d’être recontacté·e. Laissez vide pour rester anonyme.</span>
+          <input type="email" id="email" name="email" autocomplete="email" placeholder="vous@exemple.com" aria-describedby="email-hint email-error" />
+          <span class="error" id="email-error" role="alert">Saisissez une adresse valide, ou laissez le champ vide.</span>
+        </div>
+
+        <div class="field">
+          <div class="consent">
+            <input type="checkbox" id="consent" name="consent" value="oui" required aria-required="true" />
+            <label for="consent">J’accepte que mes réponses soient utilisées pour cette étude. <span class="req" aria-hidden="true">*</span></label>
+          </div>
+          <span class="error" id="consent-error" role="alert">Le consentement est nécessaire pour exporter vos réponses.</span>
+        </div>
+      </section>
+
+      <!-- 2. Profil -->
+      <section class="panel" data-section="2" aria-labelledby="s2">
+        <div class="section-head">
+          <span class="section-num">02</span>
+          <h2 class="section-title" id="s2">Profil</h2>
+        </div>
+
+        <div class="field">
+          <fieldset>
+            <legend class="q-label">Tranche d’âge <span class="req" aria-hidden="true">*</span></legend>
+            <div class="choices dense" role="radiogroup" aria-label="Tranche d’âge">
+              <label class="choice"><input type="radio" name="age" value="moins-18" required /><span>Moins de 18</span></label>
+              <label class="choice"><input type="radio" name="age" value="18-24" /><span>18–24</span></label>
+              <label class="choice"><input type="radio" name="age" value="25-34" /><span>25–34</span></label>
+              <label class="choice"><input type="radio" name="age" value="35-44" /><span>35–44</span></label>
+              <label class="choice"><input type="radio" name="age" value="45-plus" /><span>45 et plus</span></label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="field">
+          <label class="q-label" for="country">Pays <span class="req" aria-hidden="true">*</span></label>
+          <input type="text" id="country" name="country" required autocomplete="country-name" placeholder="Ex. Sénégal, Côte d’Ivoire, Mali…" />
+        </div>
+
+        <div class="field">
+          <label class="q-label" for="city">Ville <span class="opt">(facultatif)</span></label>
+          <input type="text" id="city" name="city" autocomplete="address-level2" placeholder="Ex. Dakar, Abidjan…" />
+        </div>
+
+        <div class="field">
+          <fieldset>
+            <legend class="q-label">Appareil principal <span class="req" aria-hidden="true">*</span></legend>
+            <div class="choices" role="radiogroup" aria-label="Appareil principal">
+              <label class="choice"><input type="radio" name="device" value="Android" required /><span>Android</span></label>
+              <label class="choice"><input type="radio" name="device" value="iPhone" /><span>iPhone</span></label>
+              <label class="choice"><input type="radio" name="device" value="les-deux" /><span>Les deux</span></label>
+              <label class="choice"><input type="radio" name="device" value="autre" /><span>Autre</span></label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="field">
+          <fieldset>
+            <legend class="q-label">Connexion la plus utilisée pour streamer <span class="req" aria-hidden="true">*</span></legend>
+            <div class="choices" role="radiogroup" aria-label="Type de connexion">
+              <label class="choice"><input type="radio" name="connection" value="wifi" required /><span>Wi‑Fi</span></label>
+              <label class="choice"><input type="radio" name="connection" value="data" /><span>Data mobile</span></label>
+              <label class="choice"><input type="radio" name="connection" value="mixte" /><span>Les deux à parts égales</span></label>
+            </div>
+          </fieldset>
+        </div>
+      </section>
+
+      <!-- 3. Habitudes -->
+      <section class="panel" data-section="3" aria-labelledby="s3">
+        <div class="section-head">
+          <span class="section-num">03</span>
+          <h2 class="section-title" id="s3">Habitudes d’usage</h2>
+        </div>
+
+        <div class="field">
+          <fieldset>
+            <legend class="q-label">Fréquence de streaming (musique / vidéo) <span class="req" aria-hidden="true">*</span></legend>
+            <div class="choices" role="radiogroup" aria-label="Fréquence streaming">
+              <label class="choice"><input type="radio" name="freq_streaming" value="plusieurs-fois-par-jour" required /><span>Plusieurs fois / jour</span></label>
+              <label class="choice"><input type="radio" name="freq_streaming" value="quotidien" /><span>Chaque jour</span></label>
+              <label class="choice"><input type="radio" name="freq_streaming" value="quelques-fois-semaine" /><span>Quelques fois / semaine</span></label>
+              <label class="choice"><input type="radio" name="freq_streaming" value="rarement" /><span>Rarement</span></label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="field">
+          <fieldset>
+            <legend class="q-label">Fréquence de messagerie (WhatsApp ou autre) <span class="req" aria-hidden="true">*</span></legend>
+            <div class="choices" role="radiogroup" aria-label="Fréquence messagerie">
+              <label class="choice"><input type="radio" name="freq_messaging" value="presque-en-continu" required /><span>Presque en continu</span></label>
+              <label class="choice"><input type="radio" name="freq_messaging" value="plusieurs-fois-par-jour" /><span>Plusieurs fois / jour</span></label>
+              <label class="choice"><input type="radio" name="freq_messaging" value="quotidien" /><span>Chaque jour</span></label>
+              <label class="choice"><input type="radio" name="freq_messaging" value="moins-souvent" /><span>Moins souvent</span></label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="field">
+          <fieldset>
+            <legend class="q-label">Contenus que vous consommez le plus <span class="opt">(plusieurs choix possibles)</span></legend>
+            <div class="choices">
+              <label class="choice"><input type="checkbox" name="content_types" value="musique" /><span>Musique</span></label>
+              <label class="choice"><input type="checkbox" name="content_types" value="films" /><span>Films</span></label>
+              <label class="choice"><input type="checkbox" name="content_types" value="series" /><span>Séries</span></label>
+              <label class="choice"><input type="checkbox" name="content_types" value="live" /><span>Live / direct</span></label>
+              <label class="choice"><input type="checkbox" name="content_types" value="short-video" /><span>Vidéos courtes</span></label>
+              <label class="choice"><input type="checkbox" name="content_types" value="podcasts" /><span>Podcasts</span></label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="field">
+          <fieldset>
+            <legend class="q-label">Comment découvrez-vous du contenu ? <span class="opt">(plusieurs choix)</span></legend>
+            <div class="choices">
+              <label class="choice"><input type="checkbox" name="discovery" value="algo" /><span>Suggestions de l’app</span></label>
+              <label class="choice"><input type="checkbox" name="discovery" value="amis" /><span>Amis / famille</span></label>
+              <label class="choice"><input type="checkbox" name="discovery" value="whatsapp" /><span>Partages WhatsApp</span></label>
+              <label class="choice"><input type="checkbox" name="discovery" value="reseaux" /><span>Réseaux sociaux</span></label>
+              <label class="choice"><input type="checkbox" name="discovery" value="recherche" /><span>Recherche volontaire</span></label>
+            </div>
+          </fieldset>
+        </div>
+      </section>
+
+      <!-- 4. Streaming -->
+      <section class="panel" data-section="4" aria-labelledby="s4">
+        <div class="section-head">
+          <span class="section-num">04</span>
+          <h2 class="section-title" id="s4">Streaming aujourd’hui</h2>
+        </div>
+
+        <div class="field">
+          <label class="q-label" for="streaming_opinion">
+            Que pensez-vous des apps de streaming (YouTube, Netflix, Spotify, etc.) ?
+            <span class="req" aria-hidden="true">*</span>
+          </label>
+          <textarea id="streaming_opinion" name="streaming_opinion" required placeholder="Qualité, prix, catalogue, data… ce qui compte pour vous."></textarea>
+        </div>
+
+        <div class="field">
+          <fieldset>
+            <legend class="q-label">Laquelle préférez-vous ? <span class="req" aria-hidden="true">*</span></legend>
+            <div class="choices dense" role="radiogroup" aria-label="Préférence streaming">
+              <label class="choice"><input type="radio" name="streaming_pref" value="YouTube" required /><span>YouTube</span></label>
+              <label class="choice"><input type="radio" name="streaming_pref" value="Netflix" /><span>Netflix</span></label>
+              <label class="choice"><input type="radio" name="streaming_pref" value="Spotify" /><span>Spotify</span></label>
+              <label class="choice"><input type="radio" name="streaming_pref" value="TikTok" /><span>TikTok</span></label>
+              <label class="choice"><input type="radio" name="streaming_pref" value="autre" /><span>Autre</span></label>
+            </div>
+            <label class="hint" for="streaming_pref_other">Si « Autre », précisez :</label>
+            <input type="text" id="streaming_pref_other" name="streaming_pref_other" placeholder="Nom de l’app…" autocomplete="off" />
+          </fieldset>
+        </div>
+
+        <div class="field">
+          <label class="q-label" for="streaming_why">Pourquoi cette préférence ? <span class="req" aria-hidden="true">*</span></label>
+          <textarea id="streaming_why" name="streaming_why" required placeholder="Gratuité, catalogue, qualité, habitude…"></textarea>
+        </div>
+
+        <div class="field">
+          <fieldset>
+            <legend class="q-label">
+              Aimeriez-vous une seule app qui combine Spotify + Netflix + YouTube + TikTok ?
+              <span class="req" aria-hidden="true">*</span>
+            </legend>
+            <span class="hint">De 1 (pas du tout) à 5 (absolument).</span>
+            <div class="scale" role="radiogroup" aria-label="Intérêt app tout-en-un streaming">
+              <label class="choice"><input type="radio" name="all_in_one_interest" value="1" required /><span>1</span></label>
+              <label class="choice"><input type="radio" name="all_in_one_interest" value="2" /><span>2</span></label>
+              <label class="choice"><input type="radio" name="all_in_one_interest" value="3" /><span>3</span></label>
+              <label class="choice"><input type="radio" name="all_in_one_interest" value="4" /><span>4</span></label>
+              <label class="choice"><input type="radio" name="all_in_one_interest" value="5" /><span>5</span></label>
+            </div>
+            <div class="scale-labels" aria-hidden="true"><span>Pas du tout</span><span>Absolument</span></div>
+          </fieldset>
+        </div>
+      </section>
+
+      <!-- 5. Messagerie -->
+      <section class="panel" data-section="5" aria-labelledby="s5">
+        <div class="section-head">
+          <span class="section-num">05</span>
+          <h2 class="section-title" id="s5">Messagerie & WhatsApp</h2>
+        </div>
+
+        <div class="field">
+          <label class="q-label" for="whatsapp_opinion">Que pensez-vous de WhatsApp ? <span class="req" aria-hidden="true">*</span></label>
+          <textarea id="whatsapp_opinion" name="whatsapp_opinion" required placeholder="Pratique, indispensable, trop lourd…"></textarea>
+        </div>
+
+        <div class="field">
+          <label class="q-label" for="whatsapp_why">Pourquoi l’utilisez-vous (ou pas) ? <span class="req" aria-hidden="true">*</span></label>
+          <textarea id="whatsapp_why" name="whatsapp_why" required placeholder="Tout le monde y est, appels, groupes, statut…"></textarea>
+        </div>
+
+        <div class="field">
+          <fieldset>
+            <legend class="q-label">
+              Savez-vous qu’il existe d’autres messageries, souvent plus sécurisées ?
+              <span class="req" aria-hidden="true">*</span>
+            </legend>
+            <div class="yn" role="radiogroup" aria-label="Connaissance alternatives sécurisées">
+              <label class="choice"><input type="radio" name="secure_alts_known" value="Oui" required /><span>Oui</span></label>
+              <label class="choice"><input type="radio" name="secure_alts_known" value="Non" /><span>Non</span></label>
+            </div>
+            <label class="hint" for="secure_alts_names">Lesquelles connaissez-vous ? <span class="opt">(facultatif)</span></label>
+            <input type="text" id="secure_alts_names" name="secure_alts_names" placeholder="Signal, Telegram…" autocomplete="off" />
+          </fieldset>
+        </div>
+
+        <div class="field">
+          <label class="q-label" for="alts_barriers">
+            Si vous n’utilisez pas ces alternatives, pourquoi ?
+            <span class="opt">(facultatif)</span>
+          </label>
+          <textarea id="alts_barriers" name="alts_barriers" placeholder="Amis absents, habitude, méconnaissance…"></textarea>
+        </div>
+
+        <div class="field">
+          <fieldset>
+            <legend class="q-label">Connaissez-vous des messageries africaines / locales ? <span class="req" aria-hidden="true">*</span></legend>
+            <div class="yn" role="radiogroup" aria-label="Messageries africaines">
+              <label class="choice"><input type="radio" name="african_messaging_known" value="Oui" required /><span>Oui</span></label>
+              <label class="choice"><input type="radio" name="african_messaging_known" value="Non" /><span>Non</span></label>
+            </div>
+            <label class="hint" for="african_messaging_names">Lesquelles, et qu’est-ce qui freine leur adoption ? <span class="opt">(facultatif)</span></label>
+            <textarea id="african_messaging_names" name="african_messaging_names" placeholder="Noms + freins (réseau d’amis, confiance, stabilité…)"></textarea>
+          </fieldset>
+        </div>
+      </section>
+
+      <!-- 6. Freins, confiance, langues -->
+      <section class="panel" data-section="6" aria-labelledby="s6">
+        <div class="section-head">
+          <span class="section-num">06</span>
+          <h2 class="section-title" id="s6">Freins, confiance & langues</h2>
+        </div>
+
+        <div class="field">
+          <fieldset>
+            <legend class="q-label">Quels freins rencontrez-vous aujourd’hui ? <span class="opt">(plusieurs choix)</span></legend>
+            <div class="choices">
+              <label class="choice"><input type="checkbox" name="barriers" value="cout-data" /><span>Coût de la data</span></label>
+              <label class="choice"><input type="checkbox" name="barriers" value="catalogue-local" /><span>Peu de contenu local</span></label>
+              <label class="choice"><input type="checkbox" name="barriers" value="langues" /><span>Langues / sous-titres</span></label>
+              <label class="choice"><input type="checkbox" name="barriers" value="hors-ligne" /><span>Pas assez hors-ligne</span></label>
+              <label class="choice"><input type="checkbox" name="barriers" value="prix-abo" /><span>Abonnements trop chers</span></label>
+              <label class="choice"><input type="checkbox" name="barriers" value="paiement" /><span>Paiement difficile</span></label>
+            </div>
+            <label class="hint" for="barriers_comment">Autre frein ou précision <span class="opt">(facultatif)</span></label>
+            <textarea id="barriers_comment" name="barriers_comment" placeholder="Décrivez un frein non listé, ou précisez…"></textarea>
+          </fieldset>
+        </div>
+
+        <div class="field">
+          <fieldset>
+            <legend class="q-label">
+              Confiance : à quel point vous inquiétez-vous pour vos données personnelles ?
+              <span class="req" aria-hidden="true">*</span>
+            </legend>
+            <span class="hint">1 = pas du tout inquiet·e · 5 = très inquiet·e</span>
+            <div class="scale" role="radiogroup" aria-label="Inquiétude vie privée">
+              <label class="choice"><input type="radio" name="privacy_concern" value="1" required /><span>1</span></label>
+              <label class="choice"><input type="radio" name="privacy_concern" value="2" /><span>2</span></label>
+              <label class="choice"><input type="radio" name="privacy_concern" value="3" /><span>3</span></label>
+              <label class="choice"><input type="radio" name="privacy_concern" value="4" /><span>4</span></label>
+              <label class="choice"><input type="radio" name="privacy_concern" value="5" /><span>5</span></label>
+            </div>
+            <div class="scale-labels" aria-hidden="true"><span>Pas inquiet·e</span><span>Très inquiet·e</span></div>
+          </fieldset>
+        </div>
+
+        <div class="field">
+          <fieldset>
+            <legend class="q-label">Quelles données n’aimeriez-vous pas partager ? <span class="opt">(plusieurs choix)</span></legend>
+            <div class="choices">
+              <label class="choice"><input type="checkbox" name="data_sensitive" value="localisation" /><span>Localisation</span></label>
+              <label class="choice"><input type="checkbox" name="data_sensitive" value="contacts" /><span>Contacts</span></label>
+              <label class="choice"><input type="checkbox" name="data_sensitive" value="photos" /><span>Photos / médias</span></label>
+              <label class="choice"><input type="checkbox" name="data_sensitive" value="historique" /><span>Historique d’écoute</span></label>
+              <label class="choice"><input type="checkbox" name="data_sensitive" value="paiement" /><span>Infos de paiement</span></label>
+              <label class="choice"><input type="checkbox" name="data_sensitive" value="identite" /><span>Pièce d’identité</span></label>
+              <label class="choice"><input type="checkbox" name="data_sensitive" value="numero" /><span>Numéro de téléphone</span></label>
+            </div>
+            <label class="hint" for="data_sensitive_comment">Précisez ou ajoutez d’autres données <span class="opt">(facultatif)</span></label>
+            <textarea id="data_sensitive_comment" name="data_sensitive_comment" placeholder="Ex. messages privés, nom complet…"></textarea>
+          </fieldset>
+        </div>
+
+        <div class="field">
+          <fieldset>
+            <legend class="q-label">Langues préférées pour l’interface <span class="opt">(plusieurs choix)</span></legend>
+            <div class="choices dense">
+              <label class="choice"><input type="checkbox" name="ui_languages" value="français" /><span>Français</span></label>
+              <label class="choice"><input type="checkbox" name="ui_languages" value="anglais" /><span>Anglais</span></label>
+              <label class="choice"><input type="checkbox" name="ui_languages" value="wolof" /><span>Wolof</span></label>
+              <label class="choice"><input type="checkbox" name="ui_languages" value="bambara" /><span>Bambara</span></label>
+              <label class="choice"><input type="checkbox" name="ui_languages" value="arabe" /><span>Arabe</span></label>
+              <label class="choice"><input type="checkbox" name="ui_languages" value="autre" /><span>Autre</span></label>
+            </div>
+            <label class="hint" for="ui_language_other">Autre langue d’interface :</label>
+            <input type="text" id="ui_language_other" name="ui_language_other" placeholder="Précisez…" autocomplete="off" />
+          </fieldset>
+        </div>
+
+        <div class="field">
+          <label class="q-label" for="content_languages">Langues préférées pour le contenu (films, musique…) <span class="opt">(facultatif)</span></label>
+          <input type="text" id="content_languages" name="content_languages" placeholder="Ex. français, anglais, wolof, nouchi…" />
+        </div>
+
+        <div class="field">
+          <fieldset>
+            <legend class="q-label">Intérêt pour du contenu africain / local <span class="req" aria-hidden="true">*</span></legend>
+            <span class="hint">1 = faible · 5 = très fort</span>
+            <div class="scale" role="radiogroup" aria-label="Intérêt contenu africain">
+              <label class="choice"><input type="radio" name="african_content_interest" value="1" required /><span>1</span></label>
+              <label class="choice"><input type="radio" name="african_content_interest" value="2" /><span>2</span></label>
+              <label class="choice"><input type="radio" name="african_content_interest" value="3" /><span>3</span></label>
+              <label class="choice"><input type="radio" name="african_content_interest" value="4" /><span>4</span></label>
+              <label class="choice"><input type="radio" name="african_content_interest" value="5" /><span>5</span></label>
+            </div>
+            <div class="scale-labels" aria-hidden="true"><span>Faible</span><span>Très fort</span></div>
+          </fieldset>
+        </div>
+      </section>
+
+      <!-- 7. Fonctionnalités -->
+      <section class="panel" data-section="7" aria-labelledby="s7">
+        <div class="section-head">
+          <span class="section-num">07</span>
+          <h2 class="section-title" id="s7">Attentes & fonctionnalités</h2>
+        </div>
+
+        <div class="field">
+          <label class="q-label" for="netflix_like">
+            Qu’attendez-vous d’une expérience « type Netflix » dans une app africaine ?
+            <span class="req" aria-hidden="true">*</span>
+          </label>
+          <textarea id="netflix_like" name="netflix_like" required placeholder="Catalogue, qualité vidéo, profils, recommandations…"></textarea>
+        </div>
+
+        <div class="field">
+          <fieldset>
+            <legend class="q-label">Fonctionnalités musique importantes pour vous <span class="opt">(plusieurs choix)</span></legend>
+            <div class="choices">
+              <label class="choice"><input type="checkbox" name="music_features" value="playlists" /><span>Playlists</span></label>
+              <label class="choice"><input type="checkbox" name="music_features" value="offline" /><span>Écoute hors-ligne</span></label>
+              <label class="choice"><input type="checkbox" name="music_features" value="radio" /><span>Radios / mix</span></label>
+              <label class="choice"><input type="checkbox" name="music_features" value="lyrics" /><span>Paroles</span></label>
+              <label class="choice"><input type="checkbox" name="music_features" value="local-artists" /><span>Artistes locaux</span></label>
+              <label class="choice"><input type="checkbox" name="music_features" value="partage" /><span>Partage facile</span></label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="field">
+          <fieldset>
+            <legend class="q-label">Fonctionnalités vidéo / « type YouTube » <span class="opt">(plusieurs choix)</span></legend>
+            <div class="choices">
+              <label class="choice"><input type="checkbox" name="video_features" value="upload" /><span>Publier des vidéos</span></label>
+              <label class="choice"><input type="checkbox" name="video_features" value="live" /><span>Live</span></label>
+              <label class="choice"><input type="checkbox" name="video_features" value="shorts" /><span>Vidéos courtes</span></label>
+              <label class="choice"><input type="checkbox" name="video_features" value="comments" /><span>Commentaires</span></label>
+              <label class="choice"><input type="checkbox" name="video_features" value="download" /><span>Téléchargements</span></label>
+              <label class="choice"><input type="checkbox" name="video_features" value="qualite-basse" /><span>Mode data faible</span></label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="field">
+          <fieldset>
+            <legend class="q-label">Partage social dans l’app (envoyer un film / une chanson à un contact) <span class="req" aria-hidden="true">*</span></legend>
+            <div class="yn" role="radiogroup" aria-label="Intérêt partage social">
+              <label class="choice"><input type="radio" name="social_share" value="Oui" required /><span>Oui, important</span></label>
+              <label class="choice"><input type="radio" name="social_share" value="Non" /><span>Non, pas prioritaire</span></label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="field">
+          <fieldset>
+            <legend class="q-label">Mode hors-ligne / téléchargements <span class="req" aria-hidden="true">*</span></legend>
+            <div class="yn" role="radiogroup" aria-label="Importance hors-ligne">
+              <label class="choice"><input type="radio" name="offline_mode" value="Oui" required /><span>Oui, essentiel</span></label>
+              <label class="choice"><input type="radio" name="offline_mode" value="Non" /><span>Non, secondaire</span></label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="field">
+          <label class="q-label" for="features_comment">
+            Autre fonctionnalité importante pour vous ?
+            <span class="opt">(facultatif)</span>
+          </label>
+          <textarea id="features_comment" name="features_comment" placeholder="Ex. mode famille, radios locales, stickers, appels vidéo…"></textarea>
+        </div>
+      </section>
+
+      <!-- 8. Prix & paiements -->
+      <section class="panel" data-section="8" aria-labelledby="s8">
+        <div class="section-head">
+          <span class="section-num">08</span>
+          <h2 class="section-title" id="s8">Prix & paiements</h2>
+        </div>
+
+        <div class="field">
+          <fieldset>
+            <legend class="q-label">Avez-vous un abonnement streaming payant aujourd’hui ? <span class="req" aria-hidden="true">*</span></legend>
+            <div class="yn" role="radiogroup" aria-label="Abonnement actuel">
+              <label class="choice"><input type="radio" name="has_subscription" value="Oui" required /><span>Oui</span></label>
+              <label class="choice"><input type="radio" name="has_subscription" value="Non" /><span>Non</span></label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="field">
+          <label class="q-label" for="subscription_price">
+            Si oui, environ combien payez-vous par mois (FCFA) ?
+            <span class="opt">(facultatif)</span>
+          </label>
+          <input type="text" id="subscription_price" name="subscription_price" inputmode="numeric" placeholder="Ex. 3500" />
+        </div>
+
+        <div class="field">
+          <fieldset>
+            <legend class="q-label">Moyens de paiement que vous utilisez / préférez <span class="opt">(plusieurs choix)</span></legend>
+            <div class="choices">
+              <label class="choice"><input type="checkbox" name="payment_methods" value="orange-money" /><span>Orange Money</span></label>
+              <label class="choice"><input type="checkbox" name="payment_methods" value="wave" /><span>Wave</span></label>
+              <label class="choice"><input type="checkbox" name="payment_methods" value="mtn-momo" /><span>MTN MoMo</span></label>
+              <label class="choice"><input type="checkbox" name="payment_methods" value="carte" /><span>Carte bancaire</span></label>
+              <label class="choice"><input type="checkbox" name="payment_methods" value="autre" /><span>Autre</span></label>
+            </div>
+            <label class="hint" for="payment_methods_comment">Précisez ou ajoutez un autre moyen <span class="opt">(facultatif)</span></label>
+            <textarea id="payment_methods_comment" name="payment_methods_comment" placeholder="Ex. Free Money, Moov Money, cash…"></textarea>
+          </fieldset>
+        </div>
+
+        <div class="field">
+          <fieldset>
+            <legend class="q-label">Quel système de paiement vous avantagerait le plus ? <span class="req" aria-hidden="true">*</span></legend>
+            <div class="choices" role="radiogroup" aria-label="Système de paiement avantageux">
+              <label class="choice"><input type="radio" name="payment_preferred" value="mobile-money" required /><span>Mobile Money</span></label>
+              <label class="choice"><input type="radio" name="payment_preferred" value="wave" /><span>Wave</span></label>
+              <label class="choice"><input type="radio" name="payment_preferred" value="carte" /><span>Carte bancaire</span></label>
+              <label class="choice"><input type="radio" name="payment_preferred" value="forfait-operateur" /><span>Forfait opérateur</span></label>
+              <label class="choice"><input type="radio" name="payment_preferred" value="pay-per-use" /><span>Paiement à l’usage</span></label>
+              <label class="choice"><input type="radio" name="payment_preferred" value="autre" /><span>Autre</span></label>
+            </div>
+            <label class="hint" for="payment_preferred_comment">Pourquoi ce système ? <span class="opt">(facultatif)</span></label>
+            <textarea id="payment_preferred_comment" name="payment_preferred_comment" placeholder="Praticité, frais, disponibilité…"></textarea>
+          </fieldset>
+        </div>
+
+        <div class="field">
+          <label class="q-label" for="no_sub_why">
+            Si vous n’avez pas d’abonnement, pourquoi ?
+            <span class="opt">(facultatif)</span>
+          </label>
+          <textarea id="no_sub_why" name="no_sub_why" placeholder="Prix, paiement, partage de compte, YouTube gratuit…"></textarea>
+        </div>
+
+        <div class="field">
+          <fieldset>
+            <legend class="q-label">Qui paie habituellement le streaming chez vous ? <span class="req" aria-hidden="true">*</span></legend>
+            <div class="choices" role="radiogroup" aria-label="Qui paie">
+              <label class="choice"><input type="radio" name="who_pays" value="moi" required /><span>Moi</span></label>
+              <label class="choice"><input type="radio" name="who_pays" value="famille" /><span>Famille</span></label>
+              <label class="choice"><input type="radio" name="who_pays" value="compte-partage" /><span>Compte partagé</span></label>
+              <label class="choice"><input type="radio" name="who_pays" value="personne" /><span>Personne (gratuit)</span></label>
+            </div>
+          </fieldset>
+        </div>
+      </section>
+
+      <!-- 9. Disposition à payer -->
+      <section class="panel" data-section="9" aria-labelledby="s9">
+        <div class="section-head">
+          <span class="section-num">09</span>
+          <h2 class="section-title" id="s9">Disposition à payer</h2>
+        </div>
+
+        <div class="field">
+          <fieldset>
+            <legend class="q-label">
+              Seriez-vous prêt·e à payer pour une app tout-en-un messagerie + streaming ?
+              <span class="req" aria-hidden="true">*</span>
+            </legend>
+            <div class="yn" role="radiogroup" aria-label="Disposition à payer">
+              <label class="choice"><input type="radio" name="willing_to_pay" value="Oui" required /><span>Oui</span></label>
+              <label class="choice"><input type="radio" name="willing_to_pay" value="Non" /><span>Non</span></label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="field">
+          <label class="q-label" for="wtp_amount">
+            Si oui, quel montant mensuel vous semblerait acceptable (FCFA) ?
+            <span class="opt">(facultatif)</span>
+          </label>
+          <input type="text" id="wtp_amount" name="wtp_amount" inputmode="numeric" placeholder="Ex. 2000" />
+        </div>
+
+        <div class="field">
+          <fieldset>
+            <legend class="q-label">Fourchette de prix mensuelle acceptable <span class="req" aria-hidden="true">*</span></legend>
+            <div class="choices" role="radiogroup" aria-label="Fourchette mensuelle FCFA">
+              <label class="choice"><input type="radio" name="price_range_month" value="0-1000" required /><span>0 – 1 000</span></label>
+              <label class="choice"><input type="radio" name="price_range_month" value="1000-2500" /><span>1 000 – 2 500</span></label>
+              <label class="choice"><input type="radio" name="price_range_month" value="2500-5000" /><span>2 500 – 5 000</span></label>
+              <label class="choice"><input type="radio" name="price_range_month" value="5000-plus" /><span>Plus de 5 000</span></label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="field">
+          <fieldset>
+            <legend class="q-label">Payeriez-vous 500 FCFA / semaine pour cette app ? <span class="req" aria-hidden="true">*</span></legend>
+            <div class="yn" role="radiogroup" aria-label="500 FCFA par semaine">
+              <label class="choice"><input type="radio" name="pay_500_week" value="Oui" required /><span>Oui</span></label>
+              <label class="choice"><input type="radio" name="pay_500_week" value="Non" /><span>Non</span></label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="field">
+          <fieldset>
+            <legend class="q-label">Préféreriez-vous payer au contenu (film, album…) plutôt qu’un abonnement ? <span class="req" aria-hidden="true">*</span></legend>
+            <div class="yn" role="radiogroup" aria-label="Payer par contenu">
+              <label class="choice"><input type="radio" name="pay_per_content" value="Oui" required /><span>Oui</span></label>
+              <label class="choice"><input type="radio" name="pay_per_content" value="Non" /><span>Non</span></label>
+            </div>
+            <label class="hint" for="pay_per_content_why">Pourquoi ? <span class="opt">(facultatif)</span></label>
+            <textarea id="pay_per_content_why" name="pay_per_content_why" placeholder="Flexibilité, budget serré, abonnement plus simple…"></textarea>
+          </fieldset>
+        </div>
+
+        <div class="field">
+          <label class="q-label" for="final_comment">Autre chose à nous dire ? <span class="opt">(facultatif)</span></label>
+          <textarea id="final_comment" name="final_comment" placeholder="Idées, freins, besoins non couverts…"></textarea>
+        </div>
+      </section>
+
+      <div class="actions">
+        <button type="submit" class="btn btn-primary" id="btn-send">Envoyer</button>
+        <div class="actions-secondary">
+          <button type="button" class="btn btn-ghost" id="btn-export">Télécharger une copie JSON</button>
+          <button type="button" class="btn btn-ghost" id="btn-copy">Copier les réponses</button>
+        </div>
+        <span class="toast" id="toast" role="status" aria-live="polite"></span>
+      </div>
+      <p class="footer-note">
+        En cliquant sur <strong>Envoyer</strong>, vos réponses sont transmises à l’équipe Courant
+        (e-mail de collecte). Vous pouvez aussi télécharger ou copier une copie locale.
+      </p>
+    </form>
+
+    <section class="thanks" id="thanks" aria-live="polite" aria-labelledby="thanks-title" hidden>
+      <div class="confetti-layer" id="confetti-layer" aria-hidden="true"></div>
+      <h2 id="thanks-title">Merci d’avoir répondu</h2>
+      <p>Vos réponses nous aident à concevoir une app de streaming et messagerie adaptée à vos besoins.</p>
+      <button type="button" class="btn btn-secondary" id="btn-again">Répondre à nouveau</button>
+    </section>
+  </div>
+
+  <script>
+    (function () {
+      var form = document.getElementById("survey-form");
+      var toast = document.getElementById("toast");
+      var fill = document.getElementById("progress-fill");
+      var bar = document.getElementById("progress-bar");
+      var pctEl = document.getElementById("progress-pct");
+      var secEl = document.getElementById("progress-section");
+      var thanks = document.getElementById("thanks");
+      var btnSend = document.getElementById("btn-send");
+      var STORAGE_KEY = "courant-etude-streaming-v4";
+      var TOTAL_SECTIONS = 9;
+      /* FormSubmit.co — destination des réponses (e-mail propriétaire) */
+      var FORMSUBMIT_ENDPOINT = "https://formsubmit.co/ajax/radjifadilou@gmail.com";
+
+      var LABELS = {
+        email: "Email",
+        consent: "Consentement",
+        age: "Tranche d’âge",
+        country: "Pays",
+        city: "Ville",
+        device: "Appareil",
+        connection: "Connexion",
+        freq_streaming: "Fréquence streaming",
+        freq_messaging: "Fréquence messagerie",
+        content_types: "Contenus consommés",
+        discovery: "Découverte de contenu",
+        streaming_opinion: "Avis apps streaming",
+        streaming_pref: "Préférence streaming",
+        streaming_pref_other: "Préférence (autre)",
+        streaming_why: "Pourquoi cette préférence",
+        all_in_one_interest: "Intérêt app tout-en-un (1–5)",
+        whatsapp_opinion: "Avis WhatsApp",
+        whatsapp_why: "Pourquoi WhatsApp",
+        secure_alts_known: "Connaît alternatives sécurisées",
+        secure_alts_names: "Alternatives connues",
+        alts_barriers: "Freins aux alternatives",
+        african_messaging_known: "Connaît messageries africaines",
+        african_messaging_names: "Messageries africaines / freins",
+        barriers: "Freins actuels",
+        barriers_comment: "Freins (commentaire)",
+        privacy_concern: "Inquiétude données (1–5)",
+        data_sensitive: "Données à ne pas partager",
+        data_sensitive_comment: "Données sensibles (commentaire)",
+        ui_languages: "Langues interface",
+        ui_language_other: "Langue interface (autre)",
+        content_languages: "Langues contenu",
+        african_content_interest: "Intérêt contenu africain (1–5)",
+        netflix_like: "Attentes type Netflix",
+        music_features: "Fonctionnalités musique",
+        video_features: "Fonctionnalités vidéo",
+        social_share: "Partage social dans l’app",
+        offline_mode: "Mode hors-ligne",
+        features_comment: "Autres fonctionnalités",
+        has_subscription: "Abonnement actuel",
+        subscription_price: "Prix abo mensuel (FCFA)",
+        payment_methods: "Moyens de paiement",
+        payment_methods_comment: "Moyens de paiement (commentaire)",
+        payment_preferred: "Système de paiement avantageux",
+        payment_preferred_comment: "Pourquoi ce système",
+        no_sub_why: "Pourquoi pas d’abo",
+        who_pays: "Qui paie",
+        willing_to_pay: "Prêt·e à payer messagerie+streaming",
+        wtp_amount: "Montant mensuel acceptable (FCFA)",
+        price_range_month: "Fourchette mensuelle (FCFA)",
+        pay_500_week: "500 FCFA / semaine",
+        pay_per_content: "Payer par contenu",
+        pay_per_content_why: "Pourquoi payer par contenu",
+        final_comment: "Commentaire libre"
+      };
+
+      function checkedValues(name) {
+        return Array.prototype.map.call(
+          form.querySelectorAll('input[name="' + name + '"]:checked'),
+          function (el) { return el.value; }
+        );
+      }
+
+      function radioValue(name) {
+        var el = form.querySelector('input[name="' + name + '"]:checked');
+        return el ? el.value : "";
+      }
+
+      function collect() {
+        var data = {
+          meta: {
+            study: "Courant — streaming & messagerie",
+            exportedAt: new Date().toISOString(),
+            locale: "fr"
+          },
+          answers: {}
+        };
+
+        Object.keys(LABELS).forEach(function (key) {
+          var el = form.elements[key];
+          if (!el) {
+            data.answers[key] = { label: LABELS[key], value: "" };
+            return;
+          }
+          if (el instanceof RadioNodeList || (el.length && el[0] && el[0].type === "checkbox")) {
+            var type0 = el[0] && el[0].type;
+            if (type0 === "checkbox") {
+              data.answers[key] = { label: LABELS[key], value: checkedValues(key) };
+            } else if (type0 === "radio") {
+              data.answers[key] = { label: LABELS[key], value: radioValue(key) };
+            } else {
+              data.answers[key] = { label: LABELS[key], value: el.value || "" };
+            }
+          } else if (el.type === "checkbox") {
+            data.answers[key] = { label: LABELS[key], value: el.checked ? el.value : "" };
+          } else if (el.type === "radio") {
+            data.answers[key] = { label: LABELS[key], value: radioValue(key) };
+          } else {
+            data.answers[key] = { label: LABELS[key], value: (el.value || "").trim() };
+          }
+        });
+
+        return data;
+      }
+
+      function toText(data) {
+        var lines = [
+          data.meta.study,
+          "Exporté le : " + data.meta.exportedAt,
+          ""
+        ];
+        Object.keys(data.answers).forEach(function (key) {
+          var a = data.answers[key];
+          var v = Array.isArray(a.value) ? a.value.join(", ") : a.value;
+          if (v === "" || (Array.isArray(a.value) && a.value.length === 0)) v = "—";
+          lines.push(a.label + " : " + v);
+        });
+        return lines.join("\n");
+      }
+
+      function showToast(msg, isError) {
+        toast.textContent = msg;
+        toast.classList.toggle("error", !!isError);
+        toast.classList.add("show");
+        clearTimeout(showToast._t);
+        showToast._t = setTimeout(function () {
+          toast.classList.remove("show");
+        }, 4200);
+      }
+
+      function validEmail(v) {
+        if (!v) return true;
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+      }
+
+      function clearFieldErrors() {
+        form.querySelectorAll(".invalid").forEach(function (el) {
+          el.classList.remove("invalid");
+        });
+        var emailErr = document.getElementById("email-error");
+        var consentErr = document.getElementById("consent-error");
+        if (emailErr) emailErr.classList.remove("show");
+        if (consentErr) consentErr.classList.remove("show");
+      }
+
+      function validateAllRequired() {
+        clearFieldErrors();
+        var ok = true;
+        var firstBad = null;
+
+        var email = document.getElementById("email");
+        if (!validEmail((email.value || "").trim())) {
+          document.getElementById("email-error").classList.add("show");
+          email.classList.add("invalid");
+          firstBad = email;
+          ok = false;
+        }
+
+        var consent = document.getElementById("consent");
+        if (!consent.checked) {
+          document.getElementById("consent-error").classList.add("show");
+          if (!firstBad) firstBad = consent;
+          ok = false;
+        }
+
+        var seenRadios = {};
+        var required = form.querySelectorAll("[required]");
+        for (var i = 0; i < required.length; i++) {
+          var el = required[i];
+          if (el.id === "consent") continue;
+          if (el.type === "radio") {
+            if (seenRadios[el.name]) continue;
+            seenRadios[el.name] = true;
+            if (!form.querySelector('input[name="' + el.name + '"]:checked')) {
+              var group = form.querySelectorAll('input[name="' + el.name + '"]');
+              group.forEach(function (r) {
+                var span = r.parentElement && r.parentElement.querySelector("span");
+                if (span) span.style.borderColor = "var(--coral)";
+              });
+              if (!firstBad) firstBad = el;
+              ok = false;
+            }
+          } else if (el.type === "checkbox") {
+            if (!el.checked) {
+              if (!firstBad) firstBad = el;
+              ok = false;
+            }
+          } else if (!(el.value || "").trim()) {
+            el.classList.add("invalid");
+            if (!firstBad) firstBad = el;
+            ok = false;
+          }
+        }
+
+        if (!ok && firstBad) {
+          firstBad.focus();
+          try {
+            firstBad.scrollIntoView({ behavior: "smooth", block: "center" });
+          } catch (e) { /* ignore */ }
+          showToast("Merci de remplir les champs obligatoires (*).", true);
+        }
+        return ok;
+      }
+
+      function saveDraft() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(collect()));
+        } catch (e) { /* private mode */ }
+        updateProgress();
+      }
+
+      function applyDraft(stored) {
+        if (!stored || !stored.answers) return;
+        Object.keys(stored.answers).forEach(function (key) {
+          var val = stored.answers[key] && stored.answers[key].value;
+          var nodes = form.querySelectorAll('[name="' + key + '"]');
+          if (!nodes.length) return;
+          var first = nodes[0];
+          if (first.type === "checkbox") {
+            var set = Array.isArray(val) ? val : (val ? [val] : []);
+            nodes.forEach(function (n) {
+              n.checked = set.indexOf(n.value) !== -1;
+            });
+          } else if (first.type === "radio") {
+            nodes.forEach(function (n) {
+              n.checked = n.value === val;
+            });
+          } else {
+            first.value = typeof val === "string" ? val : "";
+          }
+        });
+      }
+
+      function sectionFilled(sectionEl) {
+        var required = sectionEl.querySelectorAll("[required]");
+        var seenRadios = {};
+        for (var i = 0; i < required.length; i++) {
+          var el = required[i];
+          if (el.type === "radio") {
+            if (seenRadios[el.name]) continue;
+            seenRadios[el.name] = true;
+            if (!sectionEl.querySelector('input[name="' + el.name + '"]:checked')) return false;
+          } else if (el.type === "checkbox") {
+            if (!el.checked) return false;
+          } else if (!(el.value || "").trim()) {
+            return false;
+          }
+        }
+        return true;
+      }
+
+      function updateProgress() {
+        var sections = form.querySelectorAll(".panel[data-section]");
+        var done = 0;
+        var current = 1;
+        sections.forEach(function (sec, idx) {
+          if (sectionFilled(sec)) {
+            done += 1;
+            current = Math.min(TOTAL_SECTIONS, idx + 2);
+          } else if (done === idx) {
+            current = idx + 1;
+          }
+        });
+        if (done === TOTAL_SECTIONS) current = TOTAL_SECTIONS;
+        var pct = Math.round((done / TOTAL_SECTIONS) * 100);
+        fill.style.width = pct + "%";
+        bar.setAttribute("aria-valuenow", String(pct));
+        pctEl.textContent = pct + " %";
+        secEl.textContent = "Section " + current + " / " + TOTAL_SECTIONS;
+      }
+
+      function buildSubmitPayload(data) {
+        var payload = {
+          _subject: "Nouvelle réponse — Étude Courant streaming",
+          _template: "table",
+          _captcha: "false",
+          etude: data.meta.study,
+          envoye_le: data.meta.exportedAt,
+          reponses_json: JSON.stringify(data, null, 2)
+        };
+        Object.keys(data.answers).forEach(function (key) {
+          var a = data.answers[key];
+          var v = Array.isArray(a.value) ? a.value.join(", ") : a.value;
+          payload[a.label] = v === "" || (Array.isArray(a.value) && a.value.length === 0) ? "—" : v;
+        });
+        return payload;
+      }
+
+      function launchConfetti() {
+        var layer = document.getElementById("confetti-layer");
+        if (!layer) return;
+        layer.innerHTML = "";
+        var colors = ["#0a5c5a", "#1a9b96", "#b4472c", "#063f3e", "#4db8b4", "#e8b86d", "#2a4148"];
+        var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        var n = reduce ? 0 : 48;
+        for (var i = 0; i < n; i++) {
+          var piece = document.createElement("span");
+          piece.className = "confetti-piece";
+          piece.style.left = Math.random() * 100 + "%";
+          piece.style.background = colors[i % colors.length];
+          piece.style.animationDuration = 1.4 + Math.random() * 1.6 + "s";
+          piece.style.animationDelay = Math.random() * 0.35 + "s";
+          piece.style.transform = "rotate(" + Math.random() * 360 + "deg)";
+          piece.style.width = 6 + Math.random() * 8 + "px";
+          piece.style.height = 8 + Math.random() * 10 + "px";
+          layer.appendChild(piece);
+        }
+      }
+
+      function showThanks() {
+        document.body.classList.add("is-thanks");
+        thanks.hidden = false;
+        thanks.classList.add("show");
+        launchConfetti();
+        window.scrollTo(0, 0);
+        try {
+          localStorage.removeItem(STORAGE_KEY);
+        } catch (e) { /* ignore */ }
+      }
+
+      function hideThanks() {
+        document.body.classList.remove("is-thanks");
+        thanks.hidden = true;
+        thanks.classList.remove("show");
+        form.reset();
+        updateProgress();
+        window.scrollTo(0, 0);
+      }
+
+      function setSending(on) {
+        btnSend.disabled = !!on;
+        btnSend.textContent = on ? "Envoi…" : "Envoyer";
+      }
+
+      function submitForm(ev) {
+        if (ev) ev.preventDefault();
+        if (!validateAllRequired()) return;
+
+        var data = collect();
+        var payload = buildSubmitPayload(data);
+        setSending(true);
+        showToast("Envoi en cours…");
+
+        fetch(FORMSUBMIT_ENDPOINT, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json"
+          },
+          body: JSON.stringify(payload)
+        })
+          .then(function (res) {
+            return res.json().then(function (body) {
+              return { ok: res.ok, status: res.status, body: body };
+            }).catch(function () {
+              return { ok: res.ok, status: res.status, body: null };
+            });
+          })
+          .then(function (result) {
+            setSending(false);
+            if (result.ok) {
+              showThanks();
+              return;
+            }
+            var msg = (result.body && (result.body.message || result.body.error)) ||
+              ("Échec de l’envoi (HTTP " + result.status + ").");
+            if (String(msg).toLowerCase().indexOf("activate") !== -1 ||
+                String(msg).toLowerCase().indexOf("confirm") !== -1) {
+              msg = "Activez d’abord FormSubmit : ouvrez l’e-mail reçu sur radjifadilou@gmail.com et confirmez.";
+            }
+            showToast(msg, true);
+          })
+          .catch(function () {
+            setSending(false);
+            showToast("Réseau indisponible. Vérifiez la connexion, ou téléchargez une copie JSON.", true);
+          });
+      }
+
+      function exportJson() {
+        if (!validateAllRequired()) return;
+        var data = collect();
+        var blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json;charset=utf-8" });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        var stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-");
+        a.href = url;
+        a.download = "reponses-etude-streaming-" + stamp + ".json";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+        saveDraft();
+        showToast("Fichier JSON téléchargé.");
+      }
+
+      function copyAnswers() {
+        if (!validateAllRequired()) return;
+        var text = toText(collect());
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(function () {
+            showToast("Réponses copiées.");
+          }).catch(function () {
+            fallbackCopy(text);
+          });
+        } else {
+          fallbackCopy(text);
+        }
+        saveDraft();
+      }
+
+      function fallbackCopy(text) {
+        var ta = document.createElement("textarea");
+        ta.value = text;
+        ta.setAttribute("readonly", "");
+        ta.style.position = "fixed";
+        ta.style.left = "-9999px";
+        document.body.appendChild(ta);
+        ta.select();
+        try {
+          document.execCommand("copy");
+          showToast("Réponses copiées.");
+        } catch (e) {
+          showToast("Copie impossible — utilisez le téléchargement JSON.", true);
+        }
+        ta.remove();
+      }
+
+      form.addEventListener("input", saveDraft);
+      form.addEventListener("change", saveDraft);
+      form.addEventListener("submit", submitForm);
+      document.getElementById("btn-export").addEventListener("click", exportJson);
+      document.getElementById("btn-copy").addEventListener("click", copyAnswers);
+      document.getElementById("btn-again").addEventListener("click", hideThanks);
+
+      /* Reset coral borders on choice click */
+      form.addEventListener("change", function (e) {
+        if (e.target && e.target.type === "radio") {
+          form.querySelectorAll('input[name="' + e.target.name + '"]').forEach(function (r) {
+            var span = r.parentElement && r.parentElement.querySelector("span");
+            if (span) span.style.borderColor = "";
+          });
+        }
+      });
+
+      try {
+        var raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) applyDraft(JSON.parse(raw));
+      } catch (e) { /* ignore */ }
+
+      updateProgress();
+    })();
+  </script>
+</body>
+</html>

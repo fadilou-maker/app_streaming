@@ -46,19 +46,22 @@ Astuce : faites un premier test vous-même (remplir le minimum requis + Envoyer)
 
 ## Lien public à partager
 
-Le HTML du store Cursor n’est pas une URL publique. Pour partager le questionnaire :
+Le HTML du store Cursor n’est pas une URL publique. Le formulaire est **déjà sur `main`** du dépôt `fadilou-maker/app_streaming` (dossier `docs/`).
 
-### Option recommandée — GitHub Pages (`app_streaming`)
+### Lien définitif — GitHub Pages (à activer une fois)
 
-1. Le fichier est aussi dans le dépôt GitHub `fadilou-maker/app_streaming` (dossier `docs/` ou racine selon la PR).
-2. Activez **GitHub Pages** : dépôt → *Settings* → *Pages* → Source **Deploy from a branch** → branche `main` (ou la branche de la PR merge) → dossier `/docs` (ou `/ (root)`).
-3. Lien typique après activation (quelques minutes) :
+Le dépôt est **privé** : Pages public nécessite de le rendre public (ou un plan GitHub Pro). L’agent n’a pas pu changer ça via API.
 
-   `https://fadilou-maker.github.io/app_streaming/questionnaire-streaming.html`
+**À faire dans GitHub (≈ 1 min) :**
 
-   (Si le fichier est sous `docs/`, Pages avec source `/docs` donne la même URL sans le préfixe `docs/`.)
+1. Ouvrir https://github.com/fadilou-maker/app_streaming/settings  
+2. Section **General** → **Danger Zone** → **Change repository visibility** → **Make public**  
+3. Puis **Pages** (menu gauche) → Source **Deploy from a branch** → branche **`main`** → dossier **`/docs`** → Save  
+4. Attendre 1–2 minutes, puis ouvrir :
 
-4. Partagez ce lien WhatsApp / e-mail / réseaux.
+   **`https://fadilou-maker.github.io/app_streaming/questionnaire-streaming.html`**
+
+5. Partager ce lien WhatsApp / e-mail / réseaux.
 
 ### Option locale (tests seulement)
 
